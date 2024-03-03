@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Review Classifier</title>
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Netflix font */
+            color: #fff;
+            background-image: url('https://blog.vpncity.com/wp-content/uploads/2020/01/xx-1024x512.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Top navigation styles */
+        .top-nav {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent background */
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 100px;
+            height: auto;
+        }
+
+        .logo p {
+            font-size: 1.8rem; /* Adjust font size */
+            font-weight: bold;
+            color: #ff0000; /* Red color */
+            margin-left: 10px;
+        }
+
+        .subtext {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+            color: #fff;
+        }
+
+        .student-info {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-icon {
+            width: 20px;
+            height: auto;
+            margin-right: 5px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 100px); /* Adjusted for top navigation height */
+            padding-top: 100px; /* Adjusted for top navigation height */
+        }
+
+        .form-container {
+            background-color: rgba(0, 0, 0, 0.7); /* Transparent background */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 400px; /* Adjust width as needed */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #aaa;
+            resize: vertical;
+            background-color: #333;
+            color: #fff;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e50914; /* Netflix red */
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Netflix font */
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #b2070a; /* Darker shade of Netflix red */
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 20px;
+            font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Netflix font */
+            font-size: 1.2rem;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .positive {
+            color: green;
+        }
+
+        .negative {
+            color: red;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <div class="logo">
+            <img src="https://i.pinimg.com/originals/56/be/49/56be4940051bf2e32f78eb67ffd0a8d6.png" alt="Netflix Logo">
+            <p>
+                Movie Reviews
+            </p>
+        </div>
+        <div class="student-info">
+            <img src="https://img.icons8.com/material-rounded/24/ffffff/user-male-circle.png" class="user-icon" alt="User Icon">
+            Muhammad Haris Ali 
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <div class="form-group">
+                <label for="review">Enter your movie review:</label>
+                <textarea id="review" placeholder="Enter your movie review here..." rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <button onclick="classifyReview()">Classify Review</button>
+            </div>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function classifyReview() {
+            const review = document.getElementById("review").value;
+            const jsonData = { "text": review };
+            console.log("JSON data:", JSON.stringify(jsonData));
+
+            fetch("https://assignment-nb-8305456c6dee.herokuapp.com/getresp", {
+                method: "POST",
+                mode: "cors", // Enable CORS
+                body: JSON.stringify(jsonData),
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8"
+                }
+            })
+            .then(response => response.json())
+            .then(json => {
+                console.log(json);
+                // Handle response data as needed
+                const resultElement = document.getElementById("result");
+                resultElement.innerHTML = `Result: ${json.response}`;
+                resultElement.className = json.response === "positive" ? "positive" : "negative";
+            })
+            .catch(error => {
+                console.error('Request failed', error);
+             
+            });
+        }
+
+    
+    </script>
+</body>
+</html>
